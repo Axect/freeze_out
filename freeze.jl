@@ -28,7 +28,7 @@ function Y_eq(x::Float64)
 end
 
 vx, vy = rk4(dydx, 1., Y_eq(1.), 100., 1e-14, 10000000)
-#vx2, vy2 = rk4(dydx, 1., Y_eq(1.), 100., 1e-15, 10000000)
+vx2, vy2 = rk4(dydx, 1., Y_eq(1.), 100., 1e-15, 10000000)
 vx3, vy3 = rk4(dydx, 1., Y_eq(1.), 100., 1e-16, 10000000)
 vy_eq = map(Y_eq, vx)
 
@@ -43,8 +43,8 @@ plt.figure(figsize=(10,6), dpi=300)
 plt.title("relic abundance")
 plt.xlabel("\$x=M/T\$")
 plt.ylabel("\$Y\$")
-plt.loglog(vx, vy)
-#plt.loglog(vx, vy2)
+plt.loglog(vx, vy, label="\$<σv>=1e-14\$")
+plt.loglog(vx, vy2)
 plt.loglog(vx, vy3)
 plt.loglog(vx, vy_eq)
 
