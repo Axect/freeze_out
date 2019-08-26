@@ -12,7 +12,8 @@ const m: f64 = 100f64;
 
 fn main() {
     let mut ode_solver = ExplicitODE::new(|st| dydx(st, 1e-14f64));
-    let mut ode_solver2 = ExplicitODE::new(|st| dydx(st, 1e-16f64));
+    let mut ode_solver2 = ExplicitODE::new(|st| dydx(st, 1e-15f64));
+    let mut ode_solver3 = ExplicitODE::new(|st| dydx(st, 1e-16f64));
 
     let init_state: State<f64> = State::new(1f64, c!(y_eq(1f64)), c!(0f64));
 
@@ -28,13 +29,21 @@ fn main() {
         .set_step_size(1e-5)
         .set_times(10000000);
 
+    ode_solver3
+        .set_method(ExMethod::RK4)
+        .set_initial_condition(init_state.clone())
+        .set_step_size(1e-5)
+        .set_times(10000000);
+
     let result = ode_solver.integrate();
     let result2 = ode_solver2.integrate();
+    let result3= ode_solver3.integrate();
 
     let x = result.col(0);
     let y = result.col(1);
     let yeq = x.fmap(|t| y_eq(t));
     let y2 = result2.col(1);
+    let y3 = result3.col(1);
 
     python! {
         import pylab as plt
@@ -47,9 +56,10 @@ fn main() {
         plt.loglog('x, 'y)
         plt.loglog('x, 'yeq)
         plt.loglog('x, 'y2)
+        plt.loglog('x, 'y3)
 
         axes = plt.gca()
-        axes.set_ylim([1e-20, 1])
+        axes.set_ylim([1e-7, 1e-3])
 
         plt.grid()
         plt.savefig("plot.png")
